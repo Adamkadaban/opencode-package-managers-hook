@@ -1,4 +1,5 @@
 import type { Plugin, PluginModule } from "@opencode-ai/plugin"
+import { execSync } from "node:child_process"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -80,10 +81,14 @@ const DEFAULT_RUBY: Required<RubyOptions> = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Check whether a command is available via `command -v`. */
-async function has($: Parameters<Plugin>[0]["$"], cmd: string): Promise<boolean> {
-  const out = await $`command -v ${cmd}`.quiet().nothrow().text()
-  return out.trim().length > 0
+/** Check whether a command is available on the system PATH. */
+function has(cmd: string): boolean {
+  try {
+    execSync(`command -v ${cmd}`, { stdio: "pipe", env: process.env })
+    return true
+  } catch {
+    return false
+  }
 }
 
 /** First token of the (trimmed) command string. */
@@ -285,7 +290,7 @@ function shouldSkip(cmd: string): boolean {
 // Plugin entry point
 // ---------------------------------------------------------------------------
 
-export const PackageManagersHook: Plugin = async ({ $ }, userOpts) => {
+export const PackageManagersHook: Plugin = async (_ctx, userOpts) => {
   const opts = (userOpts ?? {}) as Options
 
   // Resolve per-ecosystem options (false = disabled)
@@ -298,12 +303,10 @@ export const PackageManagersHook: Plugin = async ({ $ }, userOpts) => {
   const verbose = opts.verbose ?? false
 
   // Probe which preferred tools exist on the system
-  const [hasUv, hasPipx, hasPnpm, hasRbenv] = await Promise.all([
-    has($, "uv"),
-    has($, "pipx"),
-    has($, "pnpm"),
-    has($, "rbenv"),
-  ])
+  const hasUv = has("uv")
+  const hasPipx = has("pipx")
+  const hasPnpm = has("pnpm")
+  const hasRbenv = has("rbenv")
 
   // Build rewriter chain — only include ecosystems whose tools are present
   const rewriters: Rewriter[] = []
