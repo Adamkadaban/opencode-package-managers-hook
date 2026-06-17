@@ -1,0 +1,62 @@
+{
+  "name": "opencode-package-managers-hook",
+  "version": "0.1.0",
+  "description": "OpenCode plugin that rewrites package manager commands to your preferred tools — uv/pipx over pip, pnpm over npm, rbenv over bare gem, and more",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "package-manager",
+    "uv",
+    "pipx",
+    "pnpm",
+    "rbenv",
+    "pip",
+    "npm",
+    "python",
+    "ruby",
+    "rust",
+    "go"
+  ],
+  "author": "Adam Hassan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adamkadaban/opencode-package-managers-hook.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Adamkadaban/opencode-package-managers-hook/issues"
+  },
+  "homepage": "https://github.com/Adamkadaban/opencode-package-managers-hook#readme",
+  "engines": {
+    "opencode": ">=1.14.22"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.15.0 <2.0.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.15.3",
+    "@types/bun": "^1.3.1",
+    "typescript": "^5.9.3"
+  }
+}
