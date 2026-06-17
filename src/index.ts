@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin, PluginModule } from "@opencode-ai/plugin"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -361,4 +361,9 @@ export const PackageManagersHook: Plugin = async ({ $ }, userOpts) => {
 }
 
 // Default export for auto-discovery
-export default PackageManagersHook
+const plugin: PluginModule & { id: string } = {
+  id: "opencode-package-managers-hook",
+  server: PackageManagersHook,
+}
+
+export default plugin
