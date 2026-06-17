@@ -42,22 +42,10 @@ export interface RubyOptions {
   rbenvExec?: boolean
 }
 
-export interface RustOptions {
-  /** What to do when `cargo install` is used outside of a project.  Default: "off". */
-  mode?: Mode
-}
-
-export interface GoOptions {
-  /** What to do when `go install` is used.  Default: "off". */
-  mode?: Mode
-}
-
 export interface Options {
   python?: PythonOptions | false
   node?: NodeOptions | false
   ruby?: RubyOptions | false
-  rust?: RustOptions | false
-  go?: GoOptions | false
   /** Log rewrites to stderr so you can see what changed.  Default: false. */
   verbose?: boolean
 }
@@ -86,14 +74,6 @@ const DEFAULT_NODE: Required<NodeOptions> = {
 const DEFAULT_RUBY: Required<RubyOptions> = {
   mode: "block",
   rbenvExec: true,
-}
-
-const DEFAULT_RUST: Required<RustOptions> = {
-  mode: "off",
-}
-
-const DEFAULT_GO: Required<GoOptions> = {
-  mode: "off",
 }
 
 // ---------------------------------------------------------------------------
@@ -283,28 +263,6 @@ function buildRubyRewriter(opts: Required<RubyOptions>): Rewriter | null {
   }
 }
 
-function buildRustRewriter(opts: Required<RustOptions>): Rewriter | null {
-  if (opts.mode === "off") return null
-
-  return (cmd) => {
-    if (/^cargo\s+install\b/i.test(cmd) && opts.mode === "block") {
-      return { rewritten: cmd, blocked: "`cargo install` is blocked by policy." }
-    }
-    return null
-  }
-}
-
-function buildGoRewriter(opts: Required<GoOptions>): Rewriter | null {
-  if (opts.mode === "off") return null
-
-  return (cmd) => {
-    if (/^go\s+install\b/i.test(cmd) && opts.mode === "block") {
-      return { rewritten: cmd, blocked: "`go install` is blocked by policy." }
-    }
-    return null
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Commands already using preferred tools — skip entirely
 // ---------------------------------------------------------------------------
@@ -316,7 +274,6 @@ const SKIP_PREFIXES = [
   /^bun\b/i,
   /^bunx\b/i,
   /^rbenv\b/i,
-  /^rustup\b/i,
 ]
 
 function shouldSkip(cmd: string): boolean {
@@ -338,10 +295,6 @@ export const PackageManagersHook: Plugin = async ({ $ }, userOpts) => {
     opts.node === false ? null : { ...DEFAULT_NODE, ...(opts.node ?? {}) }
   const rubyOpts =
     opts.ruby === false ? null : { ...DEFAULT_RUBY, ...(opts.ruby ?? {}) }
-  const rustOpts =
-    opts.rust === false ? null : { ...DEFAULT_RUST, ...(opts.rust ?? {}) }
-  const goOpts =
-    opts.go === false ? null : { ...DEFAULT_GO, ...(opts.go ?? {}) }
   const verbose = opts.verbose ?? false
 
   // Probe which preferred tools exist on the system
@@ -365,14 +318,6 @@ export const PackageManagersHook: Plugin = async ({ $ }, userOpts) => {
   }
   if (rubyOpts && hasRbenv) {
     const rw = buildRubyRewriter(rubyOpts)
-    if (rw) rewriters.push(rw)
-  }
-  if (rustOpts) {
-    const rw = buildRustRewriter(rustOpts)
-    if (rw) rewriters.push(rw)
-  }
-  if (goOpts) {
-    const rw = buildGoRewriter(goOpts)
     if (rw) rewriters.push(rw)
   }
 

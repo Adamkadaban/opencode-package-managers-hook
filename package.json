@@ -34,9 +34,7 @@
     "pip",
     "npm",
     "python",
-    "ruby",
-    "rust",
-    "go"
+    "ruby"
   ],
   "author": "Adam Hassan",
   "license": "MIT",

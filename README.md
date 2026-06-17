@@ -22,8 +22,6 @@ Stop [OpenCode](https://github.com/anomalyco/opencode) from running `pip install
 | **Python** | `pip`, `pip3`, `python -m pip`, `virtualenv`, `python -m venv`, bare `python` | `uv pip`, `pipx install` (global), `uv venv`, `uv run python` |
 | **Node** | `npm`, `npx`, `yarn` | `pnpm`, `pnpm dlx` |
 | **Ruby** | bare `gem`, bare `bundle` | `rbenv exec gem`, `rbenv exec bundle` |
-| **Rust** | `cargo install` | (block only) |
-| **Go** | `go install` | (block only) |
 
 The plugin probes your `$PATH` at startup — if a preferred tool (e.g. `uv`, `pnpm`, `rbenv`) isn't installed, that ecosystem's rewriter is silently disabled.
 
@@ -75,8 +73,6 @@ Pass options via the tuple form in your `opencode.json`:
         "mode": "block",
         "rbenvExec": true
       },
-      "rust": { "mode": "off" },
-      "go": { "mode": "off" },
       "verbose": false
     }]
   ]
@@ -115,18 +111,6 @@ All fields are optional — the defaults shown above apply when omitted.
 | `mode` | `"rewrite"` \| `"block"` \| `"off"` | `"block"` | Action when bare gem/bundle is used |
 | `rbenvExec` | `boolean` | `true` | Prepend `rbenv exec` to gem/bundle |
 
-#### Rust
-
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `mode` | `"rewrite"` \| `"block"` \| `"off"` | `"off"` | Action when `cargo install` is used |
-
-#### Go
-
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `mode` | `"rewrite"` \| `"block"` \| `"off"` | `"off"` | Action when `go install` is used |
-
 ### Disabling an ecosystem
 
 Set any ecosystem to `false` to disable it entirely:
@@ -135,9 +119,7 @@ Set any ecosystem to `false` to disable it entirely:
 {
   "plugin": [
     ["opencode-package-managers-hook", {
-      "ruby": false,
-      "rust": false,
-      "go": false
+      "ruby": false
     }]
   ]
 }
