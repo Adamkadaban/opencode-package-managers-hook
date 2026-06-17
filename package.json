@@ -1,6 +1,6 @@
 {
   "name": "opencode-package-managers-hook",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenCode plugin that rewrites package manager commands to your preferred tools — uv/pipx over pip, pnpm over npm, rbenv over bare gem, and more",
   "type": "module",
   "exports": {
