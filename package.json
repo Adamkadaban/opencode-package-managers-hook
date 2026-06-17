@@ -20,8 +20,7 @@
     "prepublishOnly": "bun run build"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "keywords": [
     "opencode",
